@@ -1,4 +1,5 @@
 require 'sinatra/base'
+require 'mongoid'
 
 module PathNotifier
   def self.app
@@ -10,4 +11,6 @@ module PathNotifier
   end
 end
 
-require File.dirname(__FILE__)+'/path_notifier/app'
+require_relative 'path_notifier/app'
+require_relative 'path_notifier/models/coordinate'
+require_relative 'path_notifier/models/poi'

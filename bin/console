@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+require "bundler/setup"
+Bundler.require(:default, :console)
+
+require_relative "../lib/path_notifier"
+
+Mongoid.configure do |config|
+  config.master = Mongo::Connection.new.db("path_notifier_dev")
+end
+
+module PathNotifier
+  binding.pry
+end

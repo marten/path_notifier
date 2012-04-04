@@ -1,7 +1,8 @@
 module PathNotifier
   class App < Sinatra::Base
-    get '/' do
-      erb "<h2>Hello There, buddy!</h2>"
+    post '/coordinates' do
+      coordinate = Models::Coordinate.create(params[:coordinate])
+      return coordinate.to_json
     end
   end
 end
