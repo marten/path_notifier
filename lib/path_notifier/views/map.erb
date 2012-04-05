@@ -30,15 +30,28 @@
       function initialize() {
         var center = new google.maps.LatLng(<%= @last_location.location[:lat] %>,<%= @last_location.location[:lng] %>);
         var myOptions = {
-          zoom: 11,
+          zoom: 15,
           center: center,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         }
 
         var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 
-        <%#var ctaLayer = new google.maps.KmlLayer('/history.kml');%>
-        <%#ctaLayer.setMap(map);%>
+        var flightPlanCoordinates = [
+        <% @coordinates.each_with_index do |coord, idx| %>
+          new google.maps.LatLng(<%= coord.location[:lat] %>, <%= coord.location[:lng] %>)<%= "," unless idx == (@coordinates.size - 1) %>
+        <% end %>
+        ];
+        var flightPath = new google.maps.Polyline({
+          path: flightPlanCoordinates,
+          strokeColor: "#FF0000",
+          strokeOpacity: 1.0,
+          strokeWeight: 2
+        });
+
+      flightPath.setMap(map);
+
+
       }
     </script>
   </head>

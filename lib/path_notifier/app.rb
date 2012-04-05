@@ -2,11 +2,8 @@ module PathNotifier
   class App < Sinatra::Base
     get '/' do
       @last_location = Models::Coordinate.last
+      @coordinates = Models::Coordinate.all
       erb :map
-    end
-
-    get '/history.kml' do
-        
     end
 
     post '/coordinates' do

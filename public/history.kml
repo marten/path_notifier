@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.1">
+  <Document>
+    <name>Martens Moves</name>
+    <Style id="blueLine">
+      <LineStyle>
+        <color>ffff0000</color>
+        <width>4</width>
+      </LineStyle>
+    </Style>
+    <Placemark>
+      <name>history</name>
+      <styleUrl>#blueLine</styleUlr>
+      <LineString>
+        <altitudeMode>relative</altitudeMode>
+        <coordinates>
+53.228150317445,6.540795257315,0
+53.228162135929,6.5409665834159,0
+53.228107863106,6.5410321298987,0
+53.228067965247,6.5410850197077,0
+53.228033138439,6.5411356464028,0
+53.228052919731,6.5410510729998,0
+53.228105683811,6.5409839339554,0
+53.228147425689,6.5409312956035,0
+53.228164692409,6.5408371668309,0
+53.228134559467,6.540768770501,0
+</coordinates>
+      </LineString>
+    </Placemark>
+  </Document>
+</kml>
