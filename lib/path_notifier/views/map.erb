@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>PathNotifier debug console</title>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      #map_canvas {
+        height: 100%;
+      }
+
+      @media print {
+        html, body {
+          height: auto;
+        }
+
+        #map_canvas {
+          height: 650px;
+        }
+      }
+    </style>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script type="text/javascript">
+      function initialize() {
+        var center = new google.maps.LatLng(<%= @last_location.location[:lat] %>,<%= @last_location.location[:lng] %>);
+        var myOptions = {
+          zoom: 11,
+          center: center,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        }
+
+        var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+        <%#var ctaLayer = new google.maps.KmlLayer('/history.kml');%>
+        <%#ctaLayer.setMap(map);%>
+      }
+    </script>
+  </head>
+  <body onload="initialize()">
+    <div id="map_canvas"></div>
+  </body>
+</html>
+

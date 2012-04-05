@@ -1,3 +1,9 @@
+GIT
+  remote: git://github.com/schleyfox/ruby_kml.git
+  revision: 7993413baad48419832e9df456eed997ebdd4ee6
+  specs:
+    ruby_kml (0.1.6)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -84,6 +90,7 @@ DEPENDENCIES
   rack-test (~> 0.6.1)
   rake
   rspec (~> 2.0)
+  ruby_kml!
   shotgun
   sinatra (~> 1.3)
   webrat

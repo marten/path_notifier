@@ -6,6 +6,7 @@ gem 'mongoid'
 gem 'mongoid_spacial'
 gem 'bson_ext'
 gem 'geoloqi'
+gem 'ruby_kml',            :git => "git://github.com/schleyfox/ruby_kml.git", :require => 'kml'
 
 group :test do
   gem 'rake'

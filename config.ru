@@ -1,6 +1,7 @@
 ENV['RACK_ENV'] ||= 'development'
 require "rubygems"
 require "bundler/setup"
+Bundler.require(:default)
 
 require File.expand_path(File.join(File.dirname(__FILE__), 'lib', 'path_notifier'))
 
