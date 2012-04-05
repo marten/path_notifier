@@ -1,16 +1,17 @@
 require "bundler/setup"
 Bundler.require(:default, :test)
 
+Mongoid.configure do |config|
+  config.master = Mongo::Connection.new.db("path_notifier_test")
+  config.allow_dynamic_fields = false
+  config.autocreate_indexes = true
+end
+
 require File.join(File.dirname(__FILE__), '..', 'lib', 'path_notifier')
 
 Webrat.configure do |config|
   config.mode = :rack
   config.application_port = 4567
-end
-
-Mongoid.configure do |config|
-  config.master = Mongo::Connection.new.db("path_notifier_test")
-  config.allow_dynamic_fields = false
 end
 
 RSpec.configure do |config|

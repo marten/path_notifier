@@ -5,6 +5,7 @@ gem 'rack',                '~>1.4.0'
 gem 'mongoid'
 gem 'mongoid_spacial'
 gem 'bson_ext'
+gem 'geoloqi'
 
 group :test do
   gem 'rake'

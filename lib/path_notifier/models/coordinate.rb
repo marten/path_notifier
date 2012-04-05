@@ -6,6 +6,9 @@ module PathNotifier
 
       field :timestamp, type: DateTime
       field :location,  type: Array, spacial: true
+
+      spacial_index :location
+      index :timestamp
     end
   end
 end
