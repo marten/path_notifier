@@ -37,20 +37,29 @@
 
         var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 
-        var flightPlanCoordinates = [
-        <% @coordinates.each_with_index do |coord, idx| %>
-          new google.maps.LatLng(<%= coord.location[:lat] %>, <%= coord.location[:lng] %>)<%= "," unless idx == (@coordinates.size - 1) %>
+        <% @groups.each do |key, coordinates| %>
+          <% 
+            varname = "day#{key.join('')}"
+            color   = "%06x" % (rand * 0xffffff)
+          %>
+
+          var <%= varname %>Coords = [
+          <% coordinates.each_with_index do |coord, idx| %>
+            new google.maps.LatLng(<%= coord.location[:lat] %>, <%= coord.location[:lng] %>)<%= "," unless idx == (coordinates.size - 1) %>
+          <% end %>
+          ];
+        
+          var <%= varname %> = new google.maps.Polyline({
+            path: <%= varname %>Coords,
+            clickable: false,
+            strokeColor: "#<%= color %>",
+            strokeOpacity: 1.0,
+            strokeWeight: 3
+          });
+
+          <%= varname %>.setMap(map);
         <% end %>
-        ];
-        var flightPath = new google.maps.Polyline({
-          path: flightPlanCoordinates,
-          strokeColor: "#FF0000",
-          strokeOpacity: 1.0,
-          strokeWeight: 2
-        });
-
-      flightPath.setMap(map);
-
+            
 
       }
     </script>

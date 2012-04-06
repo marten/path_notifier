@@ -3,6 +3,7 @@ module PathNotifier
     get '/' do
       @last_location = Models::Coordinate.last
       @coordinates = Models::Coordinate.all
+      @groups = @coordinates.group_by {|i| [i.timestamp.year, i.timestamp.month, i.timestamp.day] }
       erb :map
     end
 
