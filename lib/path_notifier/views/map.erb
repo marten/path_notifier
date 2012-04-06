@@ -25,46 +25,105 @@
         }
       }
     </style>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
     <script type="text/javascript">
+      var map;
+      var center = new google.maps.LatLng(<%= @last_location.location[:lat] %>,<%= @last_location.location[:lng] %>);
+
+      function get_random_color() {
+        var letters = '0123456789ABCDEF'.split('');
+        var color = '#';
+        for (var i = 0; i < 6; i++ ) {
+          color += letters[Math.round(Math.random() * 15)];
+        }
+        return color;
+      }
+
+
+      function loadRoutes() {
+        $.getJSON('/routes.json', function(routes) {
+          var route;
+          for (var route in routes) {
+            if (routes[route].length < 10) { 
+              continue;
+            };
+
+            var routeCoords = [];
+
+            for (var coordIdx in routes[route]) {
+              routeCoords.push(new google.maps.LatLng(routes[route][coordIdx].location.lat, routes[route][coordIdx].location.lng));
+            };
+
+            route = new google.maps.Polyline({
+              path: routeCoords,
+              clickable: false,
+              strokeColor: get_random_color(),
+              strokeOpacity: 1.0,
+              strokeWeight: 3,
+              map: map
+            });
+          };
+        });
+      };
+
+      function loadPOIs() {
+        $.getJSON('/pois.json', function(pois) {
+          for (var idx in pois) {
+            var poi = new google.maps.Circle({
+              strokeWeight: 0,
+              fillColor: "#FF0000",
+              fillOpacity: 0.01,
+              map: map,
+              center: new google.maps.LatLng(pois[idx].location.lat, pois[idx].location.lng),
+              radius: 50
+            });   
+          };
+        });
+      };
+
+      function loadPlaces() {
+        $.getJSON('/places.json', function(places) {
+          for (var idx in places) {
+            var place = new google.maps.Marker({
+              position: new google.maps.LatLng(places[idx].location.lat, places[idx].location.lng),
+              map: map,
+              title: places[idx]._id
+            });   
+            var placeRadius = new google.maps.Circle({
+              strokeColor: "#00FF00",
+              strokeOpacity: 0.8,
+              strokeWeight: 1,
+              fillColor: "#00FF00",
+              fillOpacity: 0.25,
+              map: map,
+              center: new google.maps.LatLng(places[idx].location.lat, places[idx].location.lng),
+              radius: 100
+            });   
+          };
+        });
+      };
+
       function initialize() {
-        var center = new google.maps.LatLng(<%= @last_location.location[:lat] %>,<%= @last_location.location[:lng] %>);
         var myOptions = {
           zoom: 15,
           center: center,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         }
 
-        var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-
-        <% @groups.each do |key, coordinates| %>
-          <% 
-            varname = "day#{key.join('')}"
-            color   = "%06x" % (rand * 0xffffff)
-          %>
-
-          var <%= varname %>Coords = [
-          <% coordinates.each_with_index do |coord, idx| %>
-            new google.maps.LatLng(<%= coord.location[:lat] %>, <%= coord.location[:lng] %>)<%= "," unless idx == (coordinates.size - 1) %>
-          <% end %>
-          ];
-        
-          var <%= varname %> = new google.maps.Polyline({
-            path: <%= varname %>Coords,
-            clickable: false,
-            strokeColor: "#<%= color %>",
-            strokeOpacity: 1.0,
-            strokeWeight: 3
-          });
-
-          <%= varname %>.setMap(map);
-        <% end %>
-            
+        map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 
       }
+
+      $(function() {
+        initialize();
+        loadRoutes();
+        loadPOIs();
+        loadPlaces();
+      });
     </script>
   </head>
-  <body onload="initialize()">
+  <body>
     <div id="map_canvas"></div>
   </body>
 </html>
