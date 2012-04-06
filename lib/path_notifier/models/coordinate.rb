@@ -15,7 +15,7 @@ module PathNotifier
 
       field :poi_scanned, type: Boolean, default: false
 
-      belongs_to :poi, class_name: "PathNotifier::Models::POI"
+      #belongs_to :poi, class_name: "PathNotifier::Models::POI"
 
       index :uuid,       unique: true
       index :timestamp
@@ -23,7 +23,7 @@ module PathNotifier
       index :v_accuracy
       spacial_index :location
 
-      default_scope asc(:timestamp)
+      default_scope where(:h_accuracy.lt => 100).asc(:timestamp)
 
       def self.latest
         desc(:timestamp).first
