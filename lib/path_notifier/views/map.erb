@@ -41,22 +41,22 @@
       }
 
 
-      function loadRoutes() {
-        $.getJSON('/routes.json', function(routes) {
-          var route;
-          for (var route in routes) {
-            if (routes[route].length < 10) { 
+      function loadTracks() {
+        $.getJSON('/tracks.json', function(tracks) {
+          var track;
+          for (var track in tracks) {
+            if (tracks[track].length < 10) { 
               continue;
             };
 
-            var routeCoords = [];
+            var trackCoords = [];
 
-            for (var coordIdx in routes[route]) {
-              routeCoords.push(new google.maps.LatLng(routes[route][coordIdx].location.lat, routes[route][coordIdx].location.lng));
+            for (var coordIdx in tracks[track]) {
+              trackCoords.push(new google.maps.LatLng(tracks[track][coordIdx].location.lat, tracks[track][coordIdx].location.lng));
             };
 
-            route = new google.maps.Polyline({
-              path: routeCoords,
+            track = new google.maps.Polyline({
+              path: trackCoords,
               clickable: false,
               strokeColor: get_random_color(),
               strokeOpacity: 1.0,
@@ -104,6 +104,30 @@
         });
       };
 
+      function loadRoutes() {
+        $.getJSON('/routes.json', function(routes) {
+          var route;
+          for (var idx in routes) {
+            var routeCoords = [];
+
+            var source = routes[idx].source;
+            var destination = routes[idx].destination;
+
+            routeCoords.push(new google.maps.LatLng(source.location.lat, source.location.lng));
+            routeCoords.push(new google.maps.LatLng(destination.location.lat, destination.location.lng));
+
+            route = new google.maps.Polyline({
+              path: routeCoords,
+              clickable: false,
+              strokeColor: "#FF0000",
+              strokeOpacity: 0.8,
+              strokeWeight: 2* routes[idx].occurances,
+              map: map
+            });
+          };
+        });
+      };
+
       function initialize() {
         var myOptions = {
           zoom: 15,
@@ -117,9 +141,10 @@
 
       $(function() {
         initialize();
-        loadRoutes();
+        loadTracks();
         loadPOIs();
         loadPlaces();
+        loadRoutes();
       });
     </script>
   </head>

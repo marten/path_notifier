@@ -1,6 +1,6 @@
 source :gemcutter
 
-gem 'sinatra',             '~>1.3'
+gem 'sinatra',             '~>1.3', :require => false
 gem 'rack',                '~>1.4.0'
 gem 'mongoid'
 gem 'mongoid_spacial'
@@ -20,6 +20,7 @@ end
 
 group :console do
   gem 'pry'
+  gem 'awesome_print'
 end
 
 # vim:ft=ruby

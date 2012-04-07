@@ -1,6 +1,8 @@
 module PathNotifier
   module Models
     class Place
+      SCAN_RADIUS = 100
+
       include Mongoid::Document
       include Mongoid::Spacial::Document
 
@@ -19,7 +21,7 @@ module PathNotifier
           print '.'
 
           nearby = POI.geo_near([poi.location[:lng], poi.location[:lat]],
-                                max_distance: 100, unit: :m, num: 10000)
+                                max_distance: SCAN_RADIUS, unit: :m, num: 10000)
 
           nearby = nearby.sort_by {|i| i.id.to_s }
           nearby = nearby.map(&:id).map(&:to_s)
@@ -33,10 +35,30 @@ module PathNotifier
         puts "Found #{clusters.count} places"
         clusters.each do |cluster|
           print '.'
-          self.create(:poi_ids => cluster)
+          self.safely.create(:poi_ids => cluster)
         end
+
+        # Ensure no places near to eachother
+        puts 'Detecting and removing duplicate places'
+        while duplicate_place = find_duplicate_place
+          puts "Destroying #{duplicate_place.id}"
+          duplicate_place.destroy
+        end
+
         puts ' done'
       end
+
+      def self.find_duplicate_place
+        Place.all.each do |place|
+          near_places = Place.where(:_id.ne => place.id) \
+                             .geo_near([place.location[:lng], place.location[:lat]],
+                                       max_distance: SCAN_RADIUS, unit: :m)
+          return near_places.first if near_places.any?
+        end
+
+        false
+      end
+
 
       def pois
         POI.where(:_id.in => poi_ids).all
