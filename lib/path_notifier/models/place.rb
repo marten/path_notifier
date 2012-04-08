@@ -64,6 +64,12 @@ module PathNotifier
         POI.where(:_id.in => poi_ids).all
       end
 
+      def has_tasks?
+        true
+      end
+
+      protected
+
       def calculate_location
         unless pois.empty?
           lats = pois.map {|poi| poi.location[:lat] }
