@@ -14,6 +14,7 @@ end
 require_relative 'path_notifier/app'
 require_relative 'path_notifier/geoloqi_importer'
 require_relative 'path_notifier/notification'
+require_relative 'path_notifier/location_trigger'
 require_relative 'path_notifier/models/coordinate'
 require_relative 'path_notifier/models/poi'
 require_relative 'path_notifier/models/place'

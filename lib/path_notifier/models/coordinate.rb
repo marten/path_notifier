@@ -17,7 +17,7 @@ module PathNotifier
 
       #belongs_to :poi, class_name: "PathNotifier::Models::POI"
 
-      index :uuid,       unique: true
+      #index :uuid,       unique: true
       index :timestamp
       index :h_accuracy
       index :v_accuracy

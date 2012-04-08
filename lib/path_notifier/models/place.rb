@@ -65,13 +65,15 @@ module PathNotifier
       end
 
       def calculate_location
-        lats = pois.map {|poi| poi.location[:lat] }
-        lngs = pois.map {|poi| poi.location[:lng] }
-        
-        lat  = lats.sum / lats.size
-        lng  = lngs.sum / lngs.size
+        unless pois.empty?
+          lats = pois.map {|poi| poi.location[:lat] }
+          lngs = pois.map {|poi| poi.location[:lng] }
+          
+          lat  = lats.sum / lats.size
+          lng  = lngs.sum / lngs.size
 
-        self.location = {lat: lat, lng: lng}
+          self.location = {lat: lat, lng: lng}
+        end
       end
     end
   end

@@ -5,6 +5,7 @@ Mongoid.configure do |config|
   config.master = Mongo::Connection.new.db("path_notifier_test")
   config.allow_dynamic_fields = false
   config.autocreate_indexes = true
+  config.persist_in_safe_mode = true
 end
 
 require File.join(File.dirname(__FILE__), '..', 'lib', 'path_notifier')
