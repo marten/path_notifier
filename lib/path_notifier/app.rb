@@ -1,5 +1,7 @@
 module PathNotifier
   class App < Sinatra::Base
+		set :logging, true
+
     get '/' do
       @last_location = Models::Coordinate.last
       erb :map
@@ -24,6 +26,13 @@ module PathNotifier
 		get '/routes.json' do
       @routes   = Models::Route.all
       return @routes.to_json
+		end
+
+		post '/geoloqi-callback' do
+			puts "Callback received"
+			result = LocationTrigger.trigger.to_json
+			puts "Result: #{result}"
+			result
 		end
 
     post '/coordinates' do

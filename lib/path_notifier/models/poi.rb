@@ -8,6 +8,9 @@ module PathNotifier
 
       field :coordinate_ids, type: Array
       field :location,       type: Array, spacial: true
+
+      # Did we scan this POI for Places
+      field :place_scanned,  type: Boolean, default: false
       spacial_index :location
 
       before_save :calculate_location

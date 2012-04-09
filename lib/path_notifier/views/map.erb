@@ -98,7 +98,7 @@
               fillOpacity: 0.25,
               map: map,
               center: new google.maps.LatLng(places[idx].location.lat, places[idx].location.lng),
-              radius: 100
+              radius: <%= PathNotifier::Models::Place::SCAN_RADIUS %>
             });   
           };
         });

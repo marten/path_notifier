@@ -1,7 +1,7 @@
 module PathNotifier
   module Models
     class Place
-      SCAN_RADIUS = 100
+      SCAN_RADIUS = 25
 
       include Mongoid::Document
       include Mongoid::Spacial::Document
@@ -9,40 +9,56 @@ module PathNotifier
       field :poi_ids,        type: Array
       field :location,       type: Array, spacial: true
       field :tags,           type: Array
+      field :active,         type: Boolean, default: true
+
+      default_scope where(:active.ne => false)
 
       index :tags
       spacial_index :location
 
       before_save :calculate_location
 
+      def self.find_near(location)
+        Place.geo_near([location[:lng], location[:lat]],
+                       max_distance: SCAN_RADIUS, unit: :m).sort_by {|i| i.geo[:distance] }
+      end
+
       def self.detect_clusters
         clusters = []
-        POI.all.each do |poi|
-          print '.'
+        POI.where(:place_scanned.ne => true).all.each do |poi|
+          poi.place_scanned = true
+          poi.save
 
-          nearby = POI.geo_near([poi.location[:lng], poi.location[:lat]],
-                                max_distance: SCAN_RADIUS, unit: :m, num: 10000)
+          near_places = Place.find_near(poi.location)
+          if near_places.any?
+            place = near_places.first
+            place.poi_ids << poi.id
+            place.save
 
-          nearby = nearby.sort_by {|i| i.id.to_s }
-          nearby = nearby.map(&:id).map(&:to_s)
-         
-          if nearby.size > 20
-            clusters << nearby unless clusters.include?(nearby)
+            print 'A'
+          else
+            nearby = POI.geo_near([poi.location[:lng], poi.location[:lat]],
+                                  max_distance: SCAN_RADIUS, unit: :m, num: 10000)
+
+            nearby = nearby.sort_by {|i| i.id.to_s }
+            nearby = nearby.map(&:id).map(&:to_s)
+           
+            if nearby.size > 20
+              self.safely.create(:poi_ids => nearby)
+              print 'C'
+            else
+              print '.'
+            end
           end
         end
         puts " done"
-
-        puts "Found #{clusters.count} places"
-        clusters.each do |cluster|
-          print '.'
-          self.safely.create(:poi_ids => cluster)
-        end
 
         # Ensure no places near to eachother
         puts 'Detecting and removing duplicate places'
         while duplicate_place = find_duplicate_place
           puts "Destroying #{duplicate_place.id}"
-          duplicate_place.destroy
+          duplicate_place.active = false
+          duplicate_place.save
         end
 
         puts ' done'
@@ -68,9 +84,15 @@ module PathNotifier
         true
       end
 
+      def create_trigger
+        
+      end
+
       protected
 
       def calculate_location
+        self.poi_ids = poi_ids.uniq
+        
         unless pois.empty?
           lats = pois.map {|poi| poi.location[:lat] }
           lngs = pois.map {|poi| poi.location[:lng] }

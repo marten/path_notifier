@@ -1,6 +1,6 @@
 module PathNotifier
   class LocationTrigger
-    def self.trigger(lat, lng)
+    def self.trigger
       # First, update coordinates
       PathNotifier::GeoloqiImporter.update(Models::Coordinate.latest.timestamp)
 
@@ -10,17 +10,26 @@ module PathNotifier
       current_place = Models::Place.geo_near([current_coord.location[:lng], current_coord.location[:lat]],
                                              max_distance: 100, unit: :m).first
 
-      # Then see if we have tasks associated with that place
-      if current_place.has_tasks?
-        # If we have stuff to do at that place, see if we'd normally do it
-        last_place = last_place_left_since(current_coord)
-        route = Models::Route.where(:start => last_place, :destination => current_place).first
+      if current_place
+        # Then see if we have tasks associated with that place
+        if current_place.has_tasks?
+          # If we have stuff to do at that place, see if we'd normally do it
+          last_place = last_place_left_since(current_coord)
+          route = Models::Route.where(:source_id => last_place.id, :destination_id => current_place.id).first
 
-        # We have stuff to do, and we have stopped here in the past to do stuff, so
-        # notify the user that he should do stuff
-        if route
-          Notification.new("You have stuff to do here").send
+          # We have stuff to do, and we have stopped here in the past to do stuff, so
+          # notify the user that he should do stuff
+          if route
+            status = Notification.new("You have stuff to do here").send
+            {status: "notification sent", response: status, current_place: current_place.id}
+          else
+            {status: "no-route", last_place: last_place.id, current_place: current_place.id}
+          end
+        else
+          {:status => "no-tasks", current_place: current_place.id}
         end
+      else
+        {:status => "no-place-near"}
       end
     end
 
