@@ -1,6 +1,21 @@
 module PathNotifier
   class App < Sinatra::Base
-		set :logging, true
+    configure :production, :development do
+      enable :logging
+    end
+
+    before do
+      format = %{[%s] %s - "%s %s%s %s" %d}
+      logger.info format % [
+        Time.now.strftime("%Y-%m-%d %H:%M:%S"),
+        env['HTTP_X_FORWARDED_FOR'] || env["REMOTE_ADDR"] || "-",
+        env["REQUEST_METHOD"],
+        env["PATH_INFO"],
+        env["QUERY_STRING"].empty? ? "" : "?"+env["QUERY_STRING"],
+        env["HTTP_VERSION"],
+        status.to_s[0..3]
+      ]
+    end
 
     get '/' do
       @last_location = Models::Coordinate.last
