@@ -2,6 +2,7 @@ ENV['RACK_ENV'] ||= 'development'
 require "rubygems"
 require "bundler/setup"
 Bundler.require(:default)
+::ActiveSupport::Deprecation.silenced = true
 
 require File.expand_path(File.join(File.dirname(__FILE__), 'lib', 'path_notifier'))
 
