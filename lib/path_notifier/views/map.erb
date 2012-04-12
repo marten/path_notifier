@@ -91,6 +91,12 @@
               title: places[idx].title
             });
 
+            google.maps.event.addListener(place, 'click', function() {
+              $.getJSON('/test-trigger/' + this.title.split(":")[0], function(stat) {
+                alert(JSON.stringify(stat));
+              });
+            });
+
             var placeRadiusFar = new google.maps.Circle({
               strokeColor: "#000000",
               strokeOpacity: 0.6,

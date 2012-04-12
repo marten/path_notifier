@@ -43,6 +43,12 @@ module PathNotifier
       return @routes.to_json
 		end
 
+    get '/test-trigger/:place_id' do |place_id|
+      place = Models::Place.find(params[:place_id])
+      notification = Notification.for(place)
+      return notification.send.to_json
+    end
+
 		post '/geoloqi-callback' do
 			puts "Callback received"
 			result = LocationTrigger.trigger.to_json
