@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby -Ilib
 require 'bundler/setup'
 Bundler.require(:default)
 require_relative "../lib/path_notifier"
