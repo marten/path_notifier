@@ -4,6 +4,10 @@ module PathNotifier
       @session ||= Geoloqi::Session.new :access_token => ENV['GEOLOQI_TOKEN']
     end
 
+    def self.for(place)
+      self.new("Tasks nearby: #{place.tasks.join('; ')}")
+    end
+
     def initialize(message, url = nil)
       @message = message
       @url = url

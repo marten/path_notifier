@@ -20,7 +20,7 @@ module PathNotifier
           # We have stuff to do, and we have stopped here in the past to do stuff, so
           # notify the user that he should do stuff
           if route
-            status = Notification.new("You have stuff to do here").send
+            status = Notification.for(current_place).send
             {status: "notification sent", response: status, current_place: current_place.id}
           else
             {status: "no-route", last_place: last_place.id, current_place: current_place.id}
