@@ -12,6 +12,7 @@ module PathNotifier
       # Did we scan this POI for Places
       field :place_scanned,  type: Boolean, default: false
       spacial_index :location
+      index :coordinate_ids
 
       before_save :calculate_location
 

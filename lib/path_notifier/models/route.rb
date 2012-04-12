@@ -22,6 +22,11 @@ module PathNotifier
           coordinates.each do |coord|
             #print '.'
             loc = [coord.location[:lng], coord.location[:lat]]
+            
+            unless POI.where(coordinate_ids: coord.id).any?
+              next
+            end
+
             places = Place.geo_near(loc, max_distance: SCAN_RADIUS, unit: :m)
             places = places.sort_by {|i| i.geo[:distance] }
 
