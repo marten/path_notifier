@@ -32,10 +32,10 @@
       var center = new google.maps.LatLng(<%= @last_location.location[:lat] %>,<%= @last_location.location[:lng] %>);
 
       function get_random_color() {
-        var letters = '0123456789ABCDEF'.split('');
+        var letters = '0123456789AB'.split('');
         var color = '#';
         for (var i = 0; i < 6; i++ ) {
-          color += letters[Math.round(Math.random() * 15)];
+          color += letters[Math.round(Math.random() * 11)];
         }
         return color;
       }
