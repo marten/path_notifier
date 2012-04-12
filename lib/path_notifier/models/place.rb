@@ -9,6 +9,7 @@ module PathNotifier
       field :poi_ids,        type: Array
       field :location,       type: Array, spacial: true
       field :tags,           type: Array
+      field :tasks,          type: Array, default: []
       field :active,         type: Boolean, default: true
 
       default_scope where(:active.ne => false)
@@ -81,11 +82,22 @@ module PathNotifier
       end
 
       def has_tasks?
-        true
+        tasks.any?
+      end
+      
+      def title
+        if has_tasks?
+          "#{self.id}: #{tasks.join('; ')}"
+        else
+          self.id.to_s
+        end
       end
 
-      def create_trigger
-        
+      def serializable_hash(options = nil)
+        super(options).tap do |attrs|
+          attrs.delete("poi_ids")
+          attrs["title"] = self.title
+        end
       end
 
       protected

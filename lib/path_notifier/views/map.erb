@@ -88,18 +88,30 @@
             var place = new google.maps.Marker({
               position: new google.maps.LatLng(places[idx].location.lat, places[idx].location.lng),
               map: map,
-              title: places[idx]._id
-            });   
-            var placeRadius = new google.maps.Circle({
-              strokeColor: "#00FF00",
-              strokeOpacity: 0.8,
+              title: places[idx].title
+            });
+
+            var placeRadiusFar = new google.maps.Circle({
+              strokeColor: "#000000",
+              strokeOpacity: 0.6,
               strokeWeight: 1,
               fillColor: "#00FF00",
+              fillOpacity: 0.10,
+              map: map,
+              center: new google.maps.LatLng(places[idx].location.lat, places[idx].location.lng),
+              radius: 500
+            });
+
+            var placeRadiusNear = new google.maps.Circle({
+              strokeColor: "#000000",
+              strokeOpacity: 0.4,
+              strokeWeight: 1,
+              fillColor: "#FF0000",
               fillOpacity: 0.25,
               map: map,
               center: new google.maps.LatLng(places[idx].location.lat, places[idx].location.lng),
-              radius: <%= PathNotifier::Models::Place::SCAN_RADIUS %>
-            });   
+              radius: 100
+            });
           };
         });
       };

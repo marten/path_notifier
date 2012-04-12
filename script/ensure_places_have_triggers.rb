@@ -21,24 +21,50 @@ else
   puts '  created #{@layer_id}'
 end
 
-puts 'Getting triggers'
-triggers = @session.get('trigger/list', layer_id: @layer_id)[:triggers]
+puts 'Getting places'
+places = @session.get('place/list', layer_id: @layer_id, include_unnamed: true)[:places] 
+
+def delete_trigger(trigger)
+  @session.post("trigger/delete/#{trigger[:trigger_id]}")
+end
+
+def create_trigger(place, radius)
+  @session.post('trigger/create', key: "T#{place.id}-#{radius}",
+                                  type: "callback",
+                                  url: "http://work.veldthuis.com:9393/geoloqi-callback",
+                                  one_time: false,
+                                  latitude: place.location[:lat],
+                                  longitude: place.location[:lng],
+                                  radius: radius,
+                                  place_layer_id: @layer_id,
+                                  place_key: place.id,
+                                  place_name: place.id)
+end
 
 puts "Ensuring places have triggers"
 PathNotifier::Models::Place.all.each do |place|
-  if not triggers.detect {|i| i[:key] == "T#{place.id}" }
-    puts "Place #{place.id} does not have trigger, creating."
-    puts @session.post('trigger/create', key: "T#{place.id}",
-                                    type: "callback",
-                                    url: "http://home.veldthuis.com:9393/geoloqi-callback",
-                                    one_time: false,
-                                    latitude: place.location[:lat],
-                                    longitude: place.location[:lng],
-                                    radius: 100,
-                                    place_layer_id: @layer_id,
-                                    place_key: place.id,
-                                    place_name: place.id)
+  triggers = nil
+  geo_place = places.detect {|i| i[:key] == place.id.to_s }
+  if geo_place
+    triggers = @session.get('trigger/list', place_id: geo_place[:place_id])
+    if triggers
+      triggers = triggers[:triggers]
+    else
+      triggers = []
+    end
+    triggers = triggers.select {|i| i[:key] =~ /^T#{place.id}/ }
   else
-    puts "Place #{place.id} already has a trigger"
+    triggers = []
+  end
+
+  if triggers.blank?
+    puts "Place #{place.id} does not have trigger, creating."
+    puts create_trigger(place, 100)
+    puts create_trigger(place, 500)
+  else
+    puts "Place #{place.id} already has a trigger(s), deleting and recreating"
+    triggers.each {|trigger| puts delete_trigger(trigger) }
+    puts create_trigger(place, 100)
+    puts create_trigger(place, 500)
   end
 end
