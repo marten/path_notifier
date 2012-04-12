@@ -2,6 +2,7 @@ source :gemcutter
 
 gem 'sinatra',             '~>1.3', :require => false
 gem 'rack',                '~>1.4.0'
+gem 'thin'
 gem 'mongoid'
 gem 'mongoid_spacial'
 gem 'bson_ext'
